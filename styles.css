@@ -1,0 +1,23 @@
+body {
+    background-image: linear-gradient(to right, #901858, #6E174E, #45103E);
+}
+h1 {
+        color: #1c0e0e;
+        text-align: center;
+        background-color: beige;}
+.first-title {
+    font-family: 'Courier New', Courier, monospace;
+}
+.bigger-font-size {
+    font-size: 3em;
+}
+
+button {
+    background-color: #b84f87; /* Green */
+    border: none;
+    color: #1c0e0e;
+    text-align: center;
+    font-size: 16px;
+    margin: 4px 2px;
+    border-radius: 12px;
+}

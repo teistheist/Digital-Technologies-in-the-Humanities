@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>TLT</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <h1 class="first-title bigger-font-size">
+        Digital Technologies in the Humanities</h1>
+    <h1 class="first-title">
+        Technical artifact submission</h1>
+    <div style="text-align: center;">
+        <img src="quigley_holding_disc.jpg" alt="Quigley">
+    </div>
+    <br>
+    <h1 class="first-title">Free Dictionary API</h1>
+
+    <input type="text" id="wordInput" placeholder="Enter a word">
+    <button onclick="getDefinition()">Lookup</button>
+
+    <div id="result"></div>
+    <br>
+    <h1 class="first-title"> Click the buttons below to open pages </h1>
+    <button
+    onclick="loadMarkdown('example.md', 'content'); makeBackgroundBeige();"
+    >
+        Digital technologies in linguistics
+    </button>
+    <button
+    onclick="loadMarkdown('example2.md', 'content'); makeBackgroundBeige();"
+    >
+        APIs and Github
+    </button>
+    <main>
+    <div id="content">
+    </div>
+    </main>
+</body>
+
+<script>
+async function getDefinition() {
+    const word = document.getElementById("wordInput").value.trim();
+    if (!word) return;
+
+    const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
+    const resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = "Loading...";
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const entry = data[0];
+
+        let audioUrl = null;
+        let phoneticText = null;
+
+        for (const p of entry.phonetics) {
+            if (!phoneticText && p.text) phoneticText = p.text;
+            if (p.audio) {
+                audioUrl = p.audio;
+                break;
+            }
+        }
+
+        let html = `<h2>${entry.word}</h2>`;
+
+        if (phoneticText) {
+            html += `<p class="phonetic">${phoneticText}</p>`;
+        }
+
+        if (audioUrl) {
+            html += `
+                <button class="audio-btn" onclick="playAudio('${audioUrl}')">
+                    🔊 
+                </button>
+            `;
+        }
+
+        // 📚 Meanings
+        entry.meanings.forEach(meaning => {
+            html += `<h3>${meaning.partOfSpeech}</h3>`;
+            meaning.definitions.forEach(def => {
+                html += `<p>${def.definition}</p>`;
+                if (def.example) {
+                    html += `<p class="example">Example: ${def.example}</p>`;
+                }
+            });
+        });
+
+        resultDiv.innerHTML = html;
+
+    } catch (error) {
+        resultDiv.innerHTML = "That's not a word.";
+        console.error(error);
+    }
+}
+
+function playAudio(url) {
+    const audio = new Audio(url);
+    audio.play();
+}
+
+async function loadMarkdown(filename, componentId) {
+    const response = await fetch(filename);
+    const text = await response.text();
+    document.getElementById(componentId).innerHTML = marked.parse(text);
+}
+
+function makeBackgroundBeige(){
+    document.getElementById("content").style.background = "beige";
+}
+
+function makeBackgroundBeige(){
+    document.getElementById("content").style.background = "beige";
+    document.getElementById("content").style.color = "#1c0e0e";
+}
+
+document.getElementById("content").style.backgroundColor = "beige";
+document.getElementById("content").style.color = "#1c0e0e";
+</script>
+
+</html>
+
